@@ -19,7 +19,7 @@ use `wikiundump -keep ","` :(
 
 # Directory structure
 
-Files are stored with 3 levels of subdirectories, with the namespace as an extra leading subdirectory is there is any. The directory names are the first three letters of the page title, lowercased, with each non ASCII alphanum replaced with `_`. If the name of the page is shorter than 3 characters it's padded with `_`s to length 3. The title of the page will have the first letter uppercased, according to the namespace's Case (we support only "first-letter"). 
+Files are stored with 3 levels of subdirectories, with the namespace as an extra leading subdirectory if there is any. The directory names are the first three letters of the page title, lowercased, with each non ASCII alphanum replaced with `_`. If the name of the page is shorter than 3 characters it's padded with `_`s to length 3. The title of the page will have the first letter uppercased, according to the namespace's Case (we support only "first-letter").
 
 e.g.:
 
@@ -30,11 +30,10 @@ e.g.:
     A∴A∴                        -> /a/_/a/A∴A∴
     Template:Abbreviations      -> /Template/a/b/b/Template:Abbreviations
     Template:AA                 -> /Template/a/a/_/Template:AA
-    Templater:AA                 -> /t/e/m/Templater:AA
+    Templater:AA                -> /t/e/m/Templater:AA
 
-The namespaces are saved in .../namespaces.json. Later, when loading files, it
-is needed to know what are namespaces and what just page names with a ':' in
-them. You also need to know the case rules for each namespace.
+The list of namespaces is saved in .../namespaces.json. Later, when finding files, it
+is needed to know what pages have namespace prefixes and what pages happen to have a ':' in their name. You also need to know the case rules for each namespace.
 
 
 # Redirects
