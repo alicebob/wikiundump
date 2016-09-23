@@ -30,10 +30,6 @@ func storePage(nss []Namespace, p Page, makeSymlinks bool) error {
 		if err != nil {
 			return err
 		}
-		tp := filepath.Clean(*targetDir + "/" + to)
-		if err := os.MkdirAll(filepath.Dir(tp), 0700); err != nil {
-			return err
-		}
 		rel, err := filepath.Rel(filepath.Dir(filename), to)
 		if err != nil {
 			return err
