@@ -30,7 +30,10 @@ func TestLocalFilename(t *testing.T) {
 		"A∴A∴":                         "/a/_/a/A∴A∴",
 		"Not a Template:Abbreviations": "/n/o/t/Not a Template:Abbreviations",
 		"Template:Abbreviations":       "/Template/a/b/b/Template:Abbreviations",
+		"Template:abbreviations":       "/Template/a/b/b/Template:Abbreviations",
 		"Template:AA":                  "/Template/a/a/_/Template:AA",
+		"template:abbreviations":       "/Template/a/b/b/Template:Abbreviations",
+		"tEMPLATe:abbreviatIONS":       "/Template/a/b/b/Template:AbbreviatIONS",
 	} {
 		ln, err := localFilename(nss, title)
 		if err != nil {

@@ -103,7 +103,7 @@ func parseFile(fh io.Reader) error {
 				if dec.DecodeElement(&p, &e); err != nil {
 					return nil
 				}
-				ns := findNamespace(namespaces, p.Title)
+				ns, _ := splitNamespace(namespaces, p.Title)
 				if !keepNamespace(ns) {
 					continue
 				}

@@ -45,24 +45,33 @@ func storePage(nss []Namespace, p Page, makeSymlinks bool) error {
 
 // localFilename makes the full path for a page title
 // "foobar" -> "/f/o/o/Foobar"
-// "Template:foobar" -> "/Template/f/o/o/Foobar"
+// "Template:foobar" -> "/Template/f/o/o/Template:Foobar"
 func localFilename(nss []Namespace, title string) (string, error) {
 	if title == "" {
 		return "", errors.New("empty title")
 	}
 
 	path := ""
+	ns, pageName := splitNamespace(nss, title)
 
-	ns := findNamespace(nss, title)
+	// start with the template, if it's not empty
 	if ns.Name != "" {
 		path += "/" + ns.Name
 	}
-	path += addComp(strings.TrimPrefix(title, ns.Name+":"), PathComponents)
-	filename, err := caseFold(ns, title)
+
+	// add /f/o/o
+	path += addComp(pageName, PathComponents)
+
+	// add /[namespace:]<casefolded page name>
+	path += "/"
+	if ns.Name != "" {
+		path += ns.Name + ":"
+	}
+	filename, err := caseFold(ns, pageName)
 	if err != nil {
 		return "", err
 	}
-	path += "/" + strings.Replace(filename, "/", "_", -1) // META: needed?
+	path += strings.Replace(filename, "/", "_", -1) // META: needed?
 	return path, nil
 }
 
@@ -104,16 +113,26 @@ func ucFirst(t string) string {
 	return string(rs)
 }
 
-// findNamespace looks through nss to find the namespace of page t
-func findNamespace(nss []Namespace, t string) Namespace {
-	var nspace Namespace
+// splitNamespace looks through nss to find the namespace of page t, and
+// returns that (or the empty namespace), and the page without namespace prefix.
+func splitNamespace(nss []Namespace, t string) (Namespace, string) {
+	var (
+		tLc = strings.ToLower(t)
+	)
 	for _, ns := range nss {
-		if strings.HasPrefix(t, ns.Name+":") ||
-			ns.Name == "" && nspace.Name == "" {
-			nspace = ns
+		if strings.HasPrefix(tLc, strings.ToLower(ns.Name)+":") {
+			parts := strings.SplitN(t, ":", 2)
+			return ns, parts[1]
 		}
 	}
-	return nspace
+	// no namespace
+	for _, ns := range nss {
+		if ns.Name == "" {
+			return ns, t
+		}
+	}
+	// Oops. No empty namespace. Weird.
+	return Namespace{}, t
 }
 
 // saveNamespaces stores the namespaces as json. The namespaces are needed when
